@@ -16,7 +16,7 @@ maxFeaturesPerFrame: 300
 
 # Good Features To Track specific parameters
 quality_level: 0.001
-min_distance: 20
+min_distance: 10
 block_size: 3
 use_harris_detector: 0
 k: 0.04
@@ -30,8 +30,8 @@ toleranceTemplateMatching: 0.15
 templ_cols: 101 #must be odd
 templ_rows: 11
 stripe_extra_rows: 0
-minPointDist: 0.5
-maxPointDist: 10
+minPointDist: 0.1
+maxPointDist: 3.5
 bidirectionalMatching: 0
 
 # Non-maximum suppression params

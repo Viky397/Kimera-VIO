@@ -750,6 +750,7 @@ void UtilsOpenCV::showImagesSideBySide(const cv::Mat& img_left,
                                        const std::string& title,
                                        const bool& show_images,
                                        const bool& save_images) {
+
   cv::Mat original_left_right =
       UtilsOpenCV::concatenateTwoImages(img_left, img_right);
 

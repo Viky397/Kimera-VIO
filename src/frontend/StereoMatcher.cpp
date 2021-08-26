@@ -154,8 +154,9 @@ void StereoMatcher::sparseStereoReconstruction(StereoFrame* stereo_frame) {
 //  	  std::cout << (int)left_keypoint.first << std::endl;
 //  }
 
-  fakeSparseStereoReconstruction(stereo_frame->left_keypoints_rectified_,
- 		  	  	  	  	  	  	 stereo_frame->getRightImgRectified(),
+  fakeSparseStereoReconstruction(stereo_frame->getLeftImgRectified(),
+		  	  	  	  	  	  	 stereo_frame->getRightImgRectified(),
+								 stereo_frame->left_keypoints_rectified_,
 		  	  	  	  	  	  	&stereo_frame->right_keypoints_rectified_);
   //! Fill out keypoint depths
   // TODO(marcus): we are trying to replace this method with something else?
@@ -221,8 +222,9 @@ void StereoMatcher::sparseStereoReconstruction(
 }
 
 void StereoMatcher::fakeSparseStereoReconstruction(
-	const StatusKeypointsCV& left_keypoints_rectified,
+	const cv::Mat& left_img_rectified,
 	const cv::Mat& right_img_rectified,
+	const StatusKeypointsCV& left_keypoints_rectified,
 	StatusKeypointsCV* right_keypoints_rectified) {
   CHECK_NOTNULL(right_keypoints_rectified);
   CHECK(stereo_camera_);
@@ -243,7 +245,7 @@ void StereoMatcher::fakeSparseStereoReconstruction(
 
 	  //std::cout << depth << std::endl;
 	  //unsigned depth = static_cast<unsigned>(data);
-	  if (depth_rgbd < 65535 && depth_rgbd > 0 && left_keypoint.second.x-disparity > 0) {
+	  if (depth_meter < 4 && depth_meter > 0 && left_keypoint.second.x-disparity > 0) {
 		  //std::cout << "valid point" << std::endl;
 
 		  KeypointCV match_px(left_keypoint.second.x-disparity, left_keypoint.second.y);
@@ -254,6 +256,18 @@ void StereoMatcher::fakeSparseStereoReconstruction(
 		  right_keypoints_rectified->push_back(std::make_pair(KeypointStatus::NO_RIGHT_RECT, KeypointCV(0,0)));
 	  }
   }
+
+  cv::Mat left_img_with_keypoints =
+          UtilsOpenCV::DrawCircles(left_img_rectified, left_keypoints_rectified);
+  cv::Mat right_cvt;
+  cv::normalize(right_img_rectified, right_cvt, 0, 255, cv::NORM_MINMAX, CV_8U);
+  cv::Mat right_img_with_keypoints = UtilsOpenCV::DrawCircles(
+		  right_cvt, *right_keypoints_rectified);
+  UtilsOpenCV::showImagesSideBySide(left_img_with_keypoints,
+                                    right_img_with_keypoints,
+                                    "result_getRightKeypointsRectified",
+                                    true,
+                                    false);
 }
 
 void StereoMatcher::getRightKeypointsRectified(
@@ -490,7 +504,6 @@ void StereoMatcher::getDepthFromRectifiedMatches(
   double fx_b =
       stereo_camera_->getStereoCalib()->fx() * stereo_camera_->getBaseline();
   //fx_b = stereo_camera_->getStereoCalib()->fx();
-  std::cout << "baseline: " << stereo_camera_->getBaseline() << std::endl;
   CHECK_EQ(left_keypoints_rectified.size(), right_keypoints_rectified.size())
       << "getDepthFromRectifiedMatches: size mismatch!";
   keypoints_depth->reserve(left_keypoints_rectified.size());
