@@ -126,10 +126,15 @@ void StereoMatcher::sparseStereoReconstruction(StereoFrame* stereo_frame) {
   // CHECK(!stereo_frame->isRectified());
   // TODO(marcus): LoopClosureDetector rewrites stereoframes that are already
   //   rectified using this function! That's why the above check doesn't work...
+//  std::cout << "##########################" << std::endl;
+//  for (auto& left_keypoint : stereo_frame->left_keypoints_rectified_) {
+//  	  std::cout << (int)left_keypoint.first << std::endl;
+//  }
   if (stereo_frame->isRectified()) {
     LOG(WARNING) << "sparseStereoMatching: StereoFrame is already rectified!";
-  }
-  stereo_camera_->undistortRectifyStereoFrame(stereo_frame);
+  } //else {
+    stereo_camera_->undistortRectifyStereoFrame(stereo_frame);
+  //}
   CHECK(stereo_frame->isRectified());
 
   //! Undistort rectify left keypoints
@@ -138,11 +143,20 @@ void StereoMatcher::sparseStereoReconstruction(StereoFrame* stereo_frame) {
   stereo_camera_->undistortRectifyLeftKeypoints(
       stereo_frame->left_frame_.keypoints_,
       &stereo_frame->left_keypoints_rectified_);
-  sparseStereoReconstruction(stereo_frame->getLeftImgRectified(),
+
+  /**sparseStereoReconstruction(stereo_frame->getLeftImgRectified(),
                              stereo_frame->getRightImgRectified(),
                              stereo_frame->left_keypoints_rectified_,
                              &stereo_frame->right_keypoints_rectified_);
+**/
+//  std::cout << "%%%%%%%%%%%%%%%%%%%%%%%%%" << std::endl;
+//  for (auto& left_keypoint : stereo_frame->left_keypoints_rectified_) {
+//  	  std::cout << (int)left_keypoint.first << std::endl;
+//  }
 
+  fakeSparseStereoReconstruction(stereo_frame->left_keypoints_rectified_,
+ 		  	  	  	  	  	  	 stereo_frame->getRightImgRectified(),
+		  	  	  	  	  	  	&stereo_frame->right_keypoints_rectified_);
   //! Fill out keypoint depths
   // TODO(marcus): we are trying to replace this method with something else?
   getDepthFromRectifiedMatches(stereo_frame->left_keypoints_rectified_,
@@ -203,6 +217,42 @@ void StereoMatcher::sparseStereoReconstruction(
       LOG(FATAL) << "sparseStereoMatching: only works when "
                     "VisionSensorType::STEREO or RGBD";
     }
+  }
+}
+
+void StereoMatcher::fakeSparseStereoReconstruction(
+	const StatusKeypointsCV& left_keypoints_rectified,
+	const cv::Mat& right_img_rectified,
+	StatusKeypointsCV* right_keypoints_rectified) {
+  CHECK_NOTNULL(right_keypoints_rectified);
+  CHECK(stereo_camera_);
+  const auto& stereo_calib = stereo_camera_->getStereoCalib();
+  CHECK(stereo_calib);
+
+  const auto& baseline = stereo_calib->baseline();
+  const auto& fx = stereo_calib->fx();
+  double f_b = baseline * fx;
+
+  CHECK_NOTNULL(right_keypoints_rectified)->clear();
+  right_keypoints_rectified->reserve(left_keypoints_rectified.size());
+
+  for (const auto& left_keypoint : left_keypoints_rectified) {
+	  uint16_t depth_rgbd = right_img_rectified.at<uint16_t>(left_keypoint.second);
+	  float depth_meter = depth_rgbd * 0.001f;
+	  float disparity = round(f_b / depth_meter);
+
+	  //std::cout << depth << std::endl;
+	  //unsigned depth = static_cast<unsigned>(data);
+	  if (depth_rgbd < 65535 && depth_rgbd > 0 && left_keypoint.second.x-disparity > 0) {
+		  //std::cout << "valid point" << std::endl;
+
+		  KeypointCV match_px(left_keypoint.second.x-disparity, left_keypoint.second.y);
+		  //std::cout << "left status: " << (int)left_keypoint.first << std::endl;
+		  right_keypoints_rectified->push_back(std::make_pair(KeypointStatus::VALID, match_px));
+	  } else {
+		  //std::cout << "invalid point" << std::endl;
+		  right_keypoints_rectified->push_back(std::make_pair(KeypointStatus::NO_RIGHT_RECT, KeypointCV(0,0)));
+	  }
   }
 }
 
@@ -439,7 +489,8 @@ void StereoMatcher::getDepthFromRectifiedMatches(
   // depth = fx * baseline / disparity (should be fx = focal * sensorsize)
   double fx_b =
       stereo_camera_->getStereoCalib()->fx() * stereo_camera_->getBaseline();
-
+  //fx_b = stereo_camera_->getStereoCalib()->fx();
+  std::cout << "baseline: " << stereo_camera_->getBaseline() << std::endl;
   CHECK_EQ(left_keypoints_rectified.size(), right_keypoints_rectified.size())
       << "getDepthFromRectifiedMatches: size mismatch!";
   keypoints_depth->reserve(left_keypoints_rectified.size());
@@ -475,12 +526,12 @@ void StereoMatcher::getDepthFromRectifiedMatches(
           right_keypoints_rectified.at(i).first != 
           left_keypoints_rectified[i].first) {
         // We cannot have a valid right, without a valid left keypoint.
-        LOG(WARNING) 
-            << "Cannot have a valid right kpt without also a valid left kpt!"
-            << "\nLeft kpt status: "
-            << to_underlying(left_keypoints_rectified[i].first)
-            << "\nRight kpt status: "
-            << to_underlying(right_keypoints_rectified.at(i).first);
+//        LOG(WARNING)
+//            << "Cannot have a valid right kpt without also a valid left kpt!"
+//            << "\nLeft kpt status: "
+//            << to_underlying(left_keypoints_rectified[i].first)
+//            << "\nRight kpt status: "
+//            << to_underlying(right_keypoints_rectified.at(i).first);
         right_keypoints_rectified.at(i).first =
             left_keypoints_rectified[i].first;
       }

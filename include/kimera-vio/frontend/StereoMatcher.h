@@ -78,6 +78,11 @@ class StereoMatcher {
       const StatusKeypointsCV& left_keypoints_rectified,
       StatusKeypointsCV* right_keypoints_rectified);
 
+  void fakeSparseStereoReconstruction(
+    const StatusKeypointsCV& left_keypoints_rectified,
+	const cv::Mat& right_img_rectified,
+  	StatusKeypointsCV* right_keypoints_rectified);
+
   void getRightKeypointsRectified(
       const cv::Mat& left_img_rectified,
       const cv::Mat& right_img_rectified,

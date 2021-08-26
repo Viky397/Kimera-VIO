@@ -66,7 +66,7 @@ StereoCamera::StereoCamera(const CameraParams& left_cam_params,
   const gtsam::Rot3& camR_Rot_camRrect =
       UtilsOpenCV::cvMatToGtsamRot3(R2_).inverse();
   gtsam::Pose3 camR_Pose_camRrect(camR_Rot_camRrect, gtsam::Point3::Zero());
-  B_Pose_camRrect_ = left_cam_params.body_Pose_cam_.compose(camR_Pose_camRrect);
+  B_Pose_camRrect_ = right_cam_params.body_Pose_cam_.compose(camR_Pose_camRrect);
 
   // Calc baseline (see L.2700 and L.2616 in
   // https://github.com/opencv/opencv/blob/master/modules/calib3d/src/calibration.cpp

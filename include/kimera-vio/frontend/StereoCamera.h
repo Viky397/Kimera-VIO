@@ -149,6 +149,7 @@ class StereoCamera {
    * @return
    */
   inline gtsam::Pose3 getBodyPoseLeftCamRect() const {
+	  //std::cout << "getBodyPoseLeftCamRect " << B_Pose_camLrect_ << std::endl;
     return B_Pose_camLrect_;
   }
   /**
@@ -157,6 +158,7 @@ class StereoCamera {
    * @return
    */
   inline gtsam::Pose3 getBodyPoseRightCamRect() const {
+	  //std::cout << "getBodyPoseRightCamRect " << B_Pose_camRrect_ << std::endl;
     return B_Pose_camRrect_;
   }
 

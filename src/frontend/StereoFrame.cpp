@@ -40,10 +40,10 @@ StereoFrame::StereoFrame(const FrameId& id,
       right_keypoints_rectified_(),
       keypoints_depth_(),
       keypoints_3d_() {
-  CHECK_EQ(id_, left_frame_.id_);
-  CHECK_EQ(id_, right_frame_.id_);
-  CHECK_EQ(timestamp_, left_frame_.timestamp_);
-  CHECK_EQ(timestamp_, right_frame_.timestamp_);
+  //CHECK_EQ(id_, left_frame_.id_);
+  //CHECK_EQ(id_, right_frame_.id_);
+  //CHECK_EQ(timestamp_, left_frame_.timestamp_);
+  //CHECK_EQ(timestamp_, right_frame_.timestamp_);
 }
 
 void StereoFrame::setRectifiedImages(const cv::Mat& left_rectified_img,

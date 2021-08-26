@@ -105,7 +105,7 @@ class UndistorterRectifier {
       const KeypointsCV& undistorted_kpts,
       StatusKeypointsCV* status_kpts,
       // This tolerance is huge...
-      const float& pixel_tolerance = 2.0f) const;
+      const float& pixel_tolerance = 20.0f) const;
 
   void distortUnrectifyKeypoints(const StatusKeypointsCV& keypoints_rectified,
                                  KeypointsCV* keypoints_unrectified) const;

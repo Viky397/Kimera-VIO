@@ -720,8 +720,11 @@ gtsam::Pose3 StereoVisionImuFrontend::getRelativePoseBodyMono() const {
 gtsam::Pose3 StereoVisionImuFrontend::getRelativePoseBodyStereo() const {
   gtsam::Pose3 body_Pose_cam_ =
       stereo_camera_->getBodyPoseLeftCamRect();  // of the left camera!!
-  return body_Pose_cam_ * tracker_status_summary_.lkf_T_k_stereo_ *
+  auto ret = body_Pose_cam_ * tracker_status_summary_.lkf_T_k_stereo_ *
          body_Pose_cam_.inverse();
+  //std::cout << "getRelativePoseBodyStereo body_Pose_cam_ " << body_Pose_cam_ << std::endl;
+  //std::cout << "getRelativePoseBodyStereo return " << ret << std::endl;
+  return ret;
 }
 
 /* ------------------------------------------------------------------------ */

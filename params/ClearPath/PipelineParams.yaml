@@ -7,7 +7,7 @@ frontend_type: 1
 # Type of vioBackend to use:
 # 0: VioBackend
 # 1: RegularVioBackend
-backend_type: 0
+backend_type: 1
 
 # Type of Displayer to use:
 # 0: OpenCV
