@@ -4,7 +4,7 @@
 backend_modality: 0
 
 #INITIALIZATION PARAMETERS
-autoInitialize: 1
+autoInitialize: 0
 roundOnAutoInitialize: 0
 initialPositionSigma: 1e-05
 initialRollPitchSigma: 0.00174533 # 10.0/180.0*M_PI
@@ -30,7 +30,7 @@ rankTolerance: 1
 #   * if the landmark is triangulated at distance larger than this,
 #   * result is flagged as degenerate.
 #   */
-landmarkDistanceThreshold: 4
+landmarkDistanceThreshold: 10
 
 # DynamicOutlierRejection:
 #  /**
@@ -47,7 +47,7 @@ smartNoiseSigma: 3.25
 monoNoiseSigma: 1.8
 monoNormType: 2
 monoNormParam: 4.6851
-stereoNoiseSigma: 0.03
+stereoNoiseSigma: 1.0
 stereoNormType: 2
 stereoNormParam: 4.6851
 regularityNoiseSigma: 0.03
