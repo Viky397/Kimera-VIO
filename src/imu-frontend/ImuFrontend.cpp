@@ -40,6 +40,7 @@ ImuFrontend::ImuFrontend(const ImuParams& imu_params, const ImuBias& imu_bias)
   CHECK_GT(imu_params.gyro_noise_density_, 0.0);
   CHECK_GT(imu_params.gyro_random_walk_, 0.0);
   CHECK_GT(imu_params.imu_integration_sigma_, 0.0);
+  CHECK_GT(imu_params.nominal_sampling_time_s_, 0.0);
   LOG_IF(WARNING, imu_params.imu_time_shift_ != 0.0)
       << "Applying IMU timestamp shift of: " << imu_params.imu_time_shift_ << "ns.";
   initializeImuFrontend(imu_bias);
@@ -102,6 +103,7 @@ ImuFrontend::PimPtr ImuFrontend::preintegrateImuMeasurements(
     CHECK_GT(delta_t, 0.0) << "Imu delta is 0!";
     // TODO Shouldn't we use pim_->integrateMeasurements(); for less code
     // and efficiency??
+    std::cout << "Acc int delta t: " << delta_t << "  expected: " << imu_params_.nominal_sampling_time_s_ << std::endl;
     pim_->integrateMeasurement(measured_acc, measured_omega, delta_t);
   }
   if (VLOG_IS_ON(10)) {
@@ -141,6 +143,7 @@ gtsam::Rot3 ImuFrontend::preintegrateGyroMeasurements(
     const double& delta_t =
         UtilsNumerical::NsecToSec(imu_stamps(i + 1) - imu_stamps(i));
     CHECK_GT(delta_t, 0.0) << "Imu delta is 0!";
+    std::cout << "Gyro int delta t: " << delta_t << "  expected: " << imu_params_.nominal_sampling_time_s_ << std::endl;
     pim_rot.integrateMeasurement(measured_omega, delta_t);
   }
   if (VLOG_IS_ON(10)) {

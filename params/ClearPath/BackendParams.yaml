@@ -7,11 +7,11 @@ backend_modality: 0
 autoInitialize: 0
 roundOnAutoInitialize: 0
 initialPositionSigma: 1e-05
-initialRollPitchSigma: 0.00174533 # 10.0/180.0*M_PI
+initialRollPitchSigma: 0.00174533 # 0.1/180.0*M_PI
 initialYawSigma: 0.00174533 # 0.1/180.0*M_PI
 initialVelocitySigma: 0.001
 initialAccBiasSigma: 0.1
-initialGyroBiasSigma: 0.01
+initialGyroBiasSigma: 0.1
 
 # VISION PARAMETERS ###########################################################
 ## Smart Factors ##
@@ -30,7 +30,7 @@ rankTolerance: 1
 #   * if the landmark is triangulated at distance larger than this,
 #   * result is flagged as degenerate.
 #   */
-landmarkDistanceThreshold: 10
+landmarkDistanceThreshold: 4
 
 # DynamicOutlierRejection:
 #  /**
@@ -47,7 +47,7 @@ smartNoiseSigma: 3.25
 monoNoiseSigma: 1.8
 monoNormType: 2
 monoNormParam: 4.6851
-stereoNoiseSigma: 1.0
+stereoNoiseSigma: 0.05
 stereoNormType: 2
 stereoNormParam: 4.6851
 regularityNoiseSigma: 0.03
@@ -56,7 +56,7 @@ regularityNormParam: 0.04
 
 ## Between Stereo Factors ##
 addBetweenStereoFactors: 1
-betweenRotationPrecision: 0 # Inverse of variance.
+betweenRotationPrecision: 100 # Inverse of variance.
 betweenTranslationPrecision: 100 # 1/(0.1*0.1)
 
 # OPTIMIZATION PARAMETERS #####################################################

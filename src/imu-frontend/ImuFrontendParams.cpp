@@ -83,6 +83,8 @@ void ImuParams::print() const {
                         acc_random_walk_,
                         "imu_integration_sigma: ",
                         imu_integration_sigma_,
+						"nominal_sampling_time_s_: ",
+						nominal_sampling_time_s_,
                         "imu_time_shift: ",
                         imu_time_shift_,
                         "n_gravity: ",
