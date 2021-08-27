@@ -27,6 +27,9 @@ UndistorterRectifier::UndistorterRectifier(const cv::Mat& P,
                                            const cv::Mat& R)
     : map_x_(), map_y_(), P_(P), R_(R), cam_params_(cam_params) {
   initUndistortRectifyMaps(cam_params, R, P, &map_x_, &map_y_);
+  cam_params_.print();
+  std::cout << "P: " << P_ << std::endl;
+  std::cout << "R: " << R_ << std::endl;
 }
 
 // TODO(marcus): add unit test w/ and w/o rectification
@@ -236,6 +239,7 @@ void UndistorterRectifier::initUndistortRectifyMaps(
           map_y_float);
     } break;
     case DistortionModel::EQUIDISTANT: {
+    /*
       cv::fisheye::initUndistortRectifyMap(
           // Input,
           cam_params.K_,
@@ -247,6 +251,16 @@ void UndistorterRectifier::initUndistortRectifyMaps(
           // Output:
           map_x_float,
           map_y_float);
+     */
+    	map_x_float.create(cam_params.image_size_, kImageType);
+    	map_y_float.create(cam_params.image_size_, kImageType);
+    	for (size_t i(0); i<cam_params.image_size_.width; i++) {
+    		for (size_t j(0); j<cam_params.image_size_.height; j++) {
+    			map_x_float.at<float>(j,i) = i;
+    			map_y_float.at<float>(j,i) = j;
+    		}
+    	}
+
     } break;
     default: {
       LOG(FATAL) << "Unknown distortion model: "
@@ -258,7 +272,8 @@ void UndistorterRectifier::initUndistortRectifyMaps(
   // The reason we convert from floating to fixed-point representations
   // of a map is that they can yield much faster (~2x) remapping operations.
   // cv::convertMaps(map_x_float, map_y_float, *map_x, *map_y, CV_16SC2, false);
-
+  // std::cout << "map_x: " << map_x_float << std::endl;
+  // std::cout << "map_y: " << map_y_float << std::endl;
   *map_x = map_x_float;
   *map_y = map_y_float;
 }

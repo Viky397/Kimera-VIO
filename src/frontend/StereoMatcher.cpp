@@ -132,9 +132,9 @@ void StereoMatcher::sparseStereoReconstruction(StereoFrame* stereo_frame) {
 //  }
   if (stereo_frame->isRectified()) {
     LOG(WARNING) << "sparseStereoMatching: StereoFrame is already rectified!";
-  } //else {
-    stereo_camera_->undistortRectifyStereoFrame(stereo_frame);
-  //}
+  }
+  stereo_camera_->undistortRectifyStereoFrame(stereo_frame);
+
   CHECK(stereo_frame->isRectified());
 
   //! Undistort rectify left keypoints
@@ -261,8 +261,8 @@ void StereoMatcher::fakeSparseStereoReconstruction(
           UtilsOpenCV::DrawCircles(left_img_rectified, left_keypoints_rectified);
   cv::Mat right_cvt;
   cv::normalize(right_img_rectified, right_cvt, 0, 255, cv::NORM_MINMAX, CV_8U);
-  cv::Mat right_img_with_keypoints = UtilsOpenCV::DrawCircles(
-		  right_cvt, *right_keypoints_rectified);
+  cv::Mat right_img_with_keypoints =
+		  UtilsOpenCV::DrawCircles(right_cvt, *right_keypoints_rectified);
   UtilsOpenCV::showImagesSideBySide(left_img_with_keypoints,
                                     right_img_with_keypoints,
                                     "result_getRightKeypointsRectified",
