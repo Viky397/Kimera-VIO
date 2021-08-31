@@ -103,7 +103,7 @@ ImuFrontend::PimPtr ImuFrontend::preintegrateImuMeasurements(
     CHECK_GT(delta_t, 0.0) << "Imu delta is 0!";
     // TODO Shouldn't we use pim_->integrateMeasurements(); for less code
     // and efficiency??
-    std::cout << "Acc int delta t: " << delta_t << "  expected: " << imu_params_.nominal_sampling_time_s_ << std::endl;
+    std::cout << "Combined int delta t: " << delta_t << "  expected: " << imu_params_.nominal_sampling_time_s_ << std::endl;
     pim_->integrateMeasurement(measured_acc, measured_omega, delta_t);
   }
   if (VLOG_IS_ON(10)) {
