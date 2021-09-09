@@ -224,7 +224,7 @@ void StereoMatcher::sparseStereoReconstruction(
 void StereoMatcher::fakeSparseStereoReconstruction(
 	const cv::Mat& left_img_rectified,
 	const cv::Mat& right_img_rectified,
-	const StatusKeypointsCV& left_keypoints_rectified,
+	StatusKeypointsCV& left_keypoints_rectified,
 	StatusKeypointsCV* right_keypoints_rectified) {
   CHECK_NOTNULL(right_keypoints_rectified);
   CHECK(stereo_camera_);
@@ -245,15 +245,23 @@ void StereoMatcher::fakeSparseStereoReconstruction(
 
 	  //std::cout << depth << std::endl;
 	  //unsigned depth = static_cast<unsigned>(data);
-	  if (depth_meter < 4 && depth_meter > 0 && left_keypoint.second.x-disparity > 0) {
+	  if (depth_meter < 4 && depth_meter > 0 &&
+			  left_keypoint.second.x-disparity > 0 &&
+			  left_keypoint.second.y < left_img_rectified.size().height * 4 / 5) {
 		  //std::cout << "valid point" << std::endl;
-
 		  KeypointCV match_px(left_keypoint.second.x-disparity, left_keypoint.second.y);
-		  //std::cout << "left status: " << (int)left_keypoint.first << std::endl;
 		  right_keypoints_rectified->push_back(std::make_pair(KeypointStatus::VALID, match_px));
 	  } else {
 		  //std::cout << "invalid point" << std::endl;
-		  right_keypoints_rectified->push_back(std::make_pair(KeypointStatus::NO_RIGHT_RECT, KeypointCV(0,0)));
+		  right_keypoints_rectified->push_back(std::make_pair(KeypointStatus::NO_LEFT_RECT, KeypointCV(0,0)));
+	  }
+  }
+
+  for (size_t idx(0); idx<left_keypoints_rectified.size(); idx++) {
+	  if (left_keypoints_rectified[idx].first != KeypointStatus::VALID ||
+			  right_keypoints_rectified->at(idx).first != KeypointStatus::VALID) {
+		  left_keypoints_rectified[idx].first = KeypointStatus::NO_RIGHT_RECT;
+		  right_keypoints_rectified->at(idx).first = KeypointStatus::NO_LEFT_RECT;
 	  }
   }
 

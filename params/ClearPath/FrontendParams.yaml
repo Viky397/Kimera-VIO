@@ -12,13 +12,13 @@ maxFeatureAge: 30
 # 2: AGAST
 # 3: GFTT, aka Good Features To Track
 feature_detector_type: 3
-maxFeaturesPerFrame: 300
+maxFeaturesPerFrame: 80
 
 # Good Features To Track specific parameters
-quality_level: 0.001
-min_distance: 2
+quality_level: 0.0015
+min_distance: 30
 block_size: 3
-use_harris_detector: 0
+use_harris_detector: 1
 k: 0.04
 
 # FAST detector specific parameters [10, 20]

@@ -22,7 +22,7 @@ DEFINE_bool(extract_planes_from_the_scene,
             "currently only planes.");
 
 DEFINE_bool(visualize, true, "Enable overall visualization.");
-DEFINE_bool(visualize_lmk_type, false, "Enable landmark type visualization.");
+DEFINE_bool(visualize_lmk_type, true, "Enable landmark type visualization.");
 DEFINE_int32(viz_type,
              0,
              "0: MESH2DTo3Dsparse, get a 3D mesh from a 2D triangulation of "

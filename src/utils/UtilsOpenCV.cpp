@@ -660,14 +660,14 @@ cv::Mat UtilsOpenCV::DrawCircles(const cv::Mat img,
       // green
       circle_colors.push_back(cv::Scalar(0, 255, 0));
     } else if (img_points[i].first == KeypointStatus::NO_RIGHT_RECT) {
-      valid_img_points.push_back(img_points[i].second);
+      //valid_img_points.push_back(img_points[i].second);
       // red
-      circle_colors.push_back(cv::Scalar(0, 0, 255));
+      //circle_colors.push_back(cv::Scalar(0, 0, 255));
     } else {
       // Disparity turned out negative
-      valid_img_points.push_back(img_points[i].second);
+      //valid_img_points.push_back(img_points[i].second);
       // red
-      circle_colors.push_back(cv::Scalar(0, 0, 255));
+      //circle_colors.push_back(cv::Scalar(0, 0, 255));
     }
   }
   return UtilsOpenCV::DrawCircles(

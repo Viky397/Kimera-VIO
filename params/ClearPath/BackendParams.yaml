@@ -34,7 +34,7 @@ landmarkDistanceThreshold: 4
 
 # DynamicOutlierRejection:
 #  /**
-#   * If this is nonnegative the we will check if the average reprojection error
+#   * If this is nonnegative then we will check if the average reprojection error
 #   * is smaller than this threshold after triangulation, otherwise result is
 #   * flagged as degenerate.
 #   */

@@ -48,7 +48,11 @@ struct BackendOutputParams {
             output_map_lmk_ids_to_3d_points_in_time_horizon),
         min_num_obs_for_lmks_in_time_horizon_(
             min_num_obs_for_lmks_in_time_horizon),
-        output_lmk_id_to_lmk_type_map_(output_lmk_id_to_lmk_type_map) {}
+        output_lmk_id_to_lmk_type_map_(output_lmk_id_to_lmk_type_map) {
+	  std::cout << "[Backend Params] output_map_lmk_ids_to_3d_points_in_time_horizon: " << output_map_lmk_ids_to_3d_points_in_time_horizon_ <<std::endl;
+	  std::cout << "[Backend Params] min_num_obs_for_lmks_in_time_horizon: " << min_num_obs_for_lmks_in_time_horizon_ <<std::endl;
+	  std::cout << "[Backend Params] output_lmk_id_to_lmk_type_map: " << output_lmk_id_to_lmk_type_map_ <<std::endl;
+  }
   ~BackendOutputParams() = default;
 
  public:

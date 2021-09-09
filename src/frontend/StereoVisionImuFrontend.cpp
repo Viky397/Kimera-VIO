@@ -163,9 +163,9 @@ StereoFrontendOutput::UniquePtr StereoVisionImuFrontend::nominalSpinStereo(
     CHECK_EQ(stereoFrame_lkf_->id_, stereoFrame_km1_->id_);
     CHECK(!stereoFrame_k_);
     CHECK(stereoFrame_lkf_->isKeyframe());
-    VLOG(1) << "Keyframe " << k
+    std::cout << "[JQ] Keyframe " << k
             << " with: " << status_stereo_measurements->second.size()
-            << " smart measurements";
+            << " smart measurements" << std::endl;
 
     ////////////////// DEBUG INFO FOR FRONT-END ////////////////////////////////
     if (logger_) {
@@ -208,6 +208,11 @@ StereoFrontendOutput::UniquePtr StereoVisionImuFrontend::nominalSpinStereo(
   } else {
     // Record frame rate timing
     timing_stats_frame_rate.AddSample(utils::Timer::toc(start_time).count());
+
+
+    //std::cout << "[JQ] Frame ID: " << left_frame_k.id_ << std::endl;
+    //std::cout << "[JQ] Frame ID: " << left_frame_k.id_ << std::endl;
+
 
     // We don't have a keyframe.
     VLOG(2) << "Frontend output is not a keyframe. Skipping output queue push.";
@@ -510,9 +515,21 @@ void StereoVisionImuFrontend::getSmartStereoMeasurements(
   // Pack information in landmark structure.
   smart_stereo_measurements->clear();
   smart_stereo_measurements->reserve(landmarkId_kf.size());
+
+  // std::cout << "[JQ] size of landmarks: " << landmarkId_kf.size() << std::endl;
+  // std::cout << "[JQ] size of keypoints: " << leftKeypoints.size() << std::endl;
+
+
   for (size_t i = 0; i < landmarkId_kf.size(); ++i) {
+
+	// std::cout << "[JQ] at " << i << ", landmark state is " << (landmarkId_kf.at(i)!=-1) << " and keypoint state is " << (leftKeypoints.at(i).first==KeypointStatus::VALID) << std::endl;
+
     if (landmarkId_kf.at(i) == -1) {
       continue;  // skip invalid points
+    }
+    if (leftKeypoints.at(i).first != KeypointStatus::VALID ||
+    	rightKeypoints.at(i).first != KeypointStatus::VALID) {
+    	continue;
     }
 
     // TODO implicit conversion float to double increases floating-point
@@ -720,11 +737,22 @@ gtsam::Pose3 StereoVisionImuFrontend::getRelativePoseBodyMono() const {
 gtsam::Pose3 StereoVisionImuFrontend::getRelativePoseBodyStereo() const {
   gtsam::Pose3 body_Pose_cam_ =
       stereo_camera_->getBodyPoseLeftCamRect();  // of the left camera!!
-  auto ret = body_Pose_cam_ * tracker_status_summary_.lkf_T_k_stereo_ *
+  auto pose = body_Pose_cam_ * tracker_status_summary_.lkf_T_k_stereo_ *
          body_Pose_cam_.inverse();
   //std::cout << "getRelativePoseBodyStereo body_Pose_cam_ " << body_Pose_cam_ << std::endl;
   //std::cout << "getRelativePoseBodyStereo return " << ret << std::endl;
-  return ret;
+  /*
+  auto mat = pose.matrix();
+  mat(0,2) = 0;
+  mat(1,2) = 0;
+  mat(2,0) = 0;
+  mat(2,1) = 0;
+  mat(2,2) = 1;
+  mat(2,3) = 0;
+  auto pose_2d = gtsam::Pose3(mat);
+  std::cout << "new and old rel pose: " << pose_2d << "  " << pose << std::endl;
+  */
+  return pose;
 }
 
 /* ------------------------------------------------------------------------ */
